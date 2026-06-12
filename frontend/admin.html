@@ -3,107 +3,202 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Панель художника | Додати картину</title>
+  <title>Панель адміністратора | ArtCanvas</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
 
-  <header class="bg-white shadow-sm py-4 px-6">
-    <div class="container mx-auto flex justify-between items-center">
-      <a href="index.html" class="text-xl font-bold text-indigo-600">ArtCanvas Admin</a>
-      <a href="gallery.html" class="text-sm text-gray-600 hover:text-indigo-600">Переглянути галерею &rarr;</a>
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded ml-1">Admin</span></a>
+      <nav class="space-x-6 font-medium">
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600">На головну сайту</a>
+        <a href="gallery.html" class="text-gray-600 hover:text-indigo-600">Перейти в Галерею</a>
+      </nav>
     </div>
   </header>
 
-  <main class="flex-grow flex items-center justify-center container mx-auto px-4 py-12">
-    <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-xl border border-gray-100">
-      <h2 class="text-2xl font-black text-gray-900 mb-2">Додати нову картину на продаж</h2>
-      <p class="text-sm text-gray-500 mb-6">Введіть дані картини та посилання на її зображення в інтернеті.</p>
-
-      <form id="form-add-painting" class="space-y-4">
+  <div id="admin-login-zone" class="flex-grow flex items-center justify-center p-6">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-black text-gray-900">Вхід в панель модератора</h2>
+        <p class="text-sm text-gray-500 mt-1">Доступ тільки для персоналу магазину</p>
+      </div>
+      <form id="form-admin-login" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Назва картини</label>
-          <input type="text" id="p-title" required placeholder="Наприклад: Ранковий туман" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Логін адміністратора</label>
+          <input type="text" id="admin-username" required placeholder="Введіть логін" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Пароль доступу</label>
+          <input type="password" id="admin-password" required placeholder="••••••••" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition shadow">
+          Увійти в систему
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <main id="admin-content-zone" class="container mx-auto px-6 py-12 flex-grow hidden">
+    <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+      
+      <div class="bg-indigo-900 text-white p-8 flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-black">Управління каталогом ArtCanvas</h1>
+          <p class="text-indigo-200 text-sm mt-1">Додавання нових товарів без обмежень диска хостингу</p>
+        </div>
+        <button id="btn-admin-logout" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+          ВИЙТИ З АДМІНКИ
+        </button>
+      </div>
+
+      <form id="form-add-painting" class="p-8 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Назва картини</label>
+            <input type="text" id="title" required placeholder="напр. Лісовий струмок" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Ціна (грн)</label>
+            <input type="number" id="price" required placeholder="напр. 3200" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Ціна (грн)</label>
-            <input type="number" id="p-price" required placeholder="3000" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+            <label class="block text-sm font-bold text-gray-700 mb-2">Категорія</label>
+            <input type="text" id="category" placeholder="Пейзаж, Абстракція..." class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Категорія</label>
-            <select id="p-category" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="Пейзаж">Пейзаж</option>
-              <option value="Портрет">Портрет</option>
-              <option value="Абстракція">Абстракція</option>
-              <option value="Натюрморт">Натюрморт</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Техніка виконання</label>
-            <input type="text" id="p-technique" required placeholder="Олія, полотно" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+            <label class="block text-sm font-bold text-gray-700 mb-2">Техніка</label>
+            <input type="text" id="technique" placeholder="Олія, Акрил..." class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Розмір картини</label>
-            <input type="text" id="p-size" required placeholder="40х60 см" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+            <label class="block text-sm font-bold text-gray-700 mb-2">Розмір</label>
+            <input type="text" id="size" placeholder="напр. 40х50 см" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Опис твору</label>
-          <textarea id="p-description" rows="3" placeholder="Розкажіть історію створення картини..." class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+          <label class="block text-sm font-bold text-gray-700 mb-2">🔗 Посилання на зображення (URL з інтернету)</label>
+          <input type="url" id="imageUrl" required placeholder="https://images.unsplash.com/... або будь-який інший лінк" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-indigo-600 font-mono text-sm">
+          <p class="text-xs text-gray-400 mt-1">Завантажте фото на будь-який безкоштовний фотохостинг (наприклад, Imgur чи PostImages) та вставте сюди пряме посилання.</p>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Посилання на фото картини (URL)</label>
-          <input type="url" id="p-image-url" required placeholder="https://images.unsplash.com/..." class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+          <label class="block text-sm font-bold text-gray-700 mb-2">Опис картини</label>
+          <textarea id="description" rows="3" placeholder="Короткий розповідь про картину для покупця..." class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
         </div>
 
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-md mt-4">
-          Опублікувати в галереї
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition shadow-lg tracking-wide">
+          ➕ Опублікувати картину в галерею
         </button>
       </form>
     </div>
   </main>
 
-  <script>
-    document.getElementById('form-add-painting').addEventListener('submit', async (e) => {
-      e.preventDefault();
+  <footer class="bg-gray-900 text-gray-500 text-center py-4 text-xs mt-auto">
+    Панель керування ArtCanvas 2026. Захищено токенами JWT.
+  </footer>
 
-      const bodyData = {
-        title: document.getElementById('p-title').value.trim(),
-        price: document.getElementById('p-price').value,
-        category: document.getElementById('p-category').value,
-        technique: document.getElementById('p-technique').value.trim(),
-        size: document.getElementById('p-size').value.trim(),
-        description: document.getElementById('p-description').value.trim(),
-        imageUrl: document.getElementById('p-image-url').value.trim()
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const loginZone = document.getElementById("admin-login-zone");
+      const contentZone = document.getElementById("admin-content-zone");
+      const formLogin = document.getElementById("form-admin-login");
+      const formAdd = document.getElementById("form-add-painting");
+      const btnLogout = document.getElementById("btn-admin-logout");
+
+      // Функція перевірки стану входу
+      const checkAdminAuth = () => {
+        const token = localStorage.getItem("adminToken");
+        if (token) {
+          loginZone.classList.add("hidden");
+          contentZone.classList.remove("hidden");
+        } else {
+          loginZone.classList.remove("hidden");
+          contentZone.classList.add("hidden");
+        }
       };
 
-      try {
-        const response = await fetch('/api/paintings/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bodyData)
-        });
+      // Перевіряємо статус при завантаженні сторінки
+      checkAdminAuth();
 
-        const data = await response.json();
-        if (response.ok) {
-          alert(data.msg);
-          document.getElementById('form-add-painting').reset();
-        } else {
-          alert(data.msg || 'Помилка завантаження.');
+      // 1. ПРОЦЕС ЛОГІНУ В АДМІНКУ
+      formLogin.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const login = document.getElementById("admin-username").value.trim();
+        const password = document.getElementById("admin-password").value;
+
+        try {
+          const response = await fetch("/api/auth/admin-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ login, password })
+          });
+          const data = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("adminToken", data.token);
+            alert(data.msg);
+            checkAdminAuth(); // Показуємо інтерфейс адмінки
+          } else {
+            alert(data.msg || "Помилка входу");
+          }
+        } catch (err) {
+          alert("Не вдалося зв'язатися з сервером.");
         }
-      } catch (err) {
-        console.error(err);
-        alert('Не вдалося з’єднатися із сервером.');
-      }
+      });
+
+      // 2. ПРОЦЕС ДОДАВАННЯ КАРТИНИ (З ПЕРЕДАЧЕЮ АДМІН-ТОКЕНА)
+      formAdd.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const adminToken = localStorage.getItem("adminToken");
+
+        const bodyData = {
+          title: document.getElementById("title").value.trim(),
+          price: document.getElementById("price").value,
+          category: document.getElementById("category").value.trim(),
+          technique: document.getElementById("technique").value.trim(),
+          size: document.getElementById("size").value.trim(),
+          description: document.getElementById("description").value.trim(),
+          imageUrl: document.getElementById("imageUrl").value.trim()
+        };
+
+        try {
+          const response = await fetch("/api/paintings/add", {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${adminToken}` // Передаємо захисний токен адміна
+            },
+            body: JSON.stringify(bodyData)
+          });
+          const data = await response.json();
+
+          if (response.ok) {
+            alert(data.msg);
+            formAdd.reset(); // Очищуємо поля форми
+          } else {
+            alert(data.msg || "Помилка додавання картини.");
+            if (response.status === 401 || response.status === 403) {
+              // Якщо токен застарів або підроблений — розлогінюємо
+              localStorage.removeItem("adminToken");
+              checkAdminAuth();
+            }
+          }
+        } catch (err) {
+          alert("Помилка зв'язку з сервером.");
+        }
+      });
+
+      // 3. ВИХІД З АДМІН-ПАНЕЛИ
+      btnLogout.addEventListener("click", () => {
+        localStorage.removeItem("adminToken");
+        alert("Ви вийшли з панелі адміністратора.");
+        checkAdminAuth();
+      });
     });
   </script>
 </body>
