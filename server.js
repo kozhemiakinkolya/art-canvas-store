@@ -142,7 +142,11 @@ app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, r
   saveData(ORDERS_FILE, orders);
   res.json({ msg: '🎉 Замовлення успішно створено!', order: newOrder });
 });
-
+// 👑 РОУТ ДЛЯ АДМІНІСТРАТОРА: ОРИМАННЯ ВСІХ ЗАМОВЛЕНЬ
+app.get('/api/admin/orders', adminMiddleware, (req, res) => {
+  let orders = loadData(ORDERS_FILE);
+  res.json(orders);
+});
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
