@@ -65,33 +65,39 @@ const adminMiddleware = (req, res, next) => {
   }
 };
 
-// --- РОУТИ АВТОРИЗАЦІЇ ---
+// --- РОУТИ АВТОРИЗАЦІЇ ЗА НОМЕРОМ ТЕЛЕФОНУ ---
 app.post('/api/auth/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, phone, password } = req.body;
   let users = loadData(USERS_FILE);
-  if (users.find(u => u.email === email)) return res.status(400).json({ msg: 'Email вже існує' });
+  
+  // Перевірка унікальності номера телефону
+  if (users.find(u => u.phone === phone)) {
+    return res.status(400).json({ msg: 'Користувач з цим номером телефону вже зареєстрований!' });
+  }
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  const newUser = { id: Date.now().toString(), name, email, password: hashedPassword };
+  const newUser = { id: Date.now().toString(), name, phone, password: hashedPassword };
   
   users.push(newUser);
   saveData(USERS_FILE, users);
+  
   const token = jwt.sign({ user: { id: newUser.id, role: 'user' } }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, user: { id: newUser.id, name: newUser.name, email: newUser.email } });
+  res.json({ token, user: { id: newUser.id, name: newUser.name, phone: newUser.phone } });
 });
 
 app.post('/api/auth/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { phone, password } = req.body;
   let users = loadData(USERS_FILE);
-  const user = users.find(u => u.email === email);
-  if (!user) return res.status(400).json({ msg: 'Неправильний Email або пароль' });
+  
+  const user = users.find(u => u.phone === phone);
+  if (!user) return res.status(400).json({ msg: 'Неправильний номер телефону або пароль' });
 
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json({ msg: 'Неправильний Email або пароль' });
+  if (!isMatch) return res.status(400).json({ msg: 'Неправильний номер телефону або пароль' });
 
   const token = jwt.sign({ user: { id: user.id, role: 'user' } }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+  res.json({ token, user: { id: user.id, name: user.name, phone: user.phone } });
 });
 
 app.post('/api/auth/admin-login', (req, res) => {
@@ -143,7 +149,7 @@ app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, r
   res.json({ msg: '🎉 Замовлення успішно створено!', order: newOrder });
 });
 
-// 👑 РОУТИ АДМІНІСТРАТОРА: ОТРИМАННЯ ЗАМОВЛЕНЬ + КЛІЄНТИ
+// 👑 РОУТИ АДМІНІСТРАТОРА: ОТРИМАННЯ ЗАМОВЛЕНЬ + ТЕЛЕФОНИ КЛІЄНТІВ
 app.get('/api/admin/orders', adminMiddleware, (req, res) => {
   let orders = loadData(ORDERS_FILE);
   let users = loadData(USERS_FILE);
@@ -153,7 +159,7 @@ app.get('/api/admin/orders', adminMiddleware, (req, res) => {
     return {
       ...order,
       buyerName: buyer ? buyer.name : 'Невідомий клієнт',
-      buyerEmail: buyer ? buyer.email : 'Емейл відсутній'
+      buyerPhone: buyer ? buyer.phone : 'Телефон відсутній'
     };
   });
   res.json(ordersWithUsers);
