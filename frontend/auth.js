@@ -1,78 +1,110 @@
-const API_URL = "http://localhost:5000/api/auth";
+document.addEventListener("DOMContentLoaded", () => {
+  // Елементи перемикання форм (Вхід / Реєстрація)
+  const loginBox = document.getElementById("login-box");
+  const registerBox = document.getElementById("register-box");
+  const toRegisterBtn = document.getElementById("to-register");
+  const toLoginBtn = document.getElementById("to-login");
 
-// Перемикання вкладок Вхід / Реєстрація
-const tabLogin = document.getElementById("tab-login");
-const tabRegister = document.getElementById("tab-register");
-const formLogin = document.getElementById("form-login");
-const formRegister = document.getElementById("form-register");
+  // Форми та їхні поля
+  const formLogin = document.getElementById("form-login");
+  const formRegister = document.getElementById("form-register");
 
-tabLogin.addEventListener("click", () => {
-  tabLogin.className = "text-xl font-bold text-indigo-600 border-b-2 border-indigo-600 pb-2 focus:outline-none";
-  tabRegister.className = "text-xl font-bold text-gray-400 hover:text-indigo-600 pb-2 focus:outline-none";
-  formLogin.classList.remove("hidden");
-  formRegister.classList.add("hidden");
-});
-
-tabRegister.addEventListener("click", () => {
-  tabRegister.className = "text-xl font-bold text-indigo-600 border-b-2 border-indigo-600 pb-2 focus:outline-none";
-  tabLogin.className = "text-xl font-bold text-gray-400 hover:text-indigo-600 pb-2 focus:outline-none";
-  formRegister.classList.remove("hidden");
-  formLogin.classList.add("hidden");
-});
-
-// ОБРОБКА ВХОДУ (LOGIN)
-formLogin.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
-
-  try {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+  // ==========================================
+  // 1. ЛОГІКА ПЕРЕМИКАННЯ ЕКРАНІВ
+  // ==========================================
+  if (toRegisterBtn && toLoginBtn) {
+    toRegisterBtn.addEventListener("click", () => {
+      loginBox.classList.add("hidden");
+      registerBox.classList.remove("hidden");
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userName", data.user.name);
-      window.location.href = "index.html"; // Повертаємо на головну сторінку
-    } else {
-      alert(data.msg || "Помилка входу");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Не вдалося з'єднатися з сервером");
+    toLoginBtn.addEventListener("click", () => {
+      registerBox.classList.add("hidden");
+      loginBox.classList.remove("hidden");
+    });
   }
-});
 
-// ОБРОБКА РЕЄСТРАЦІЇ (REGISTER)
-formRegister.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = document.getElementById("reg-name").value;
-  const email = document.getElementById("reg-email").value;
-  const password = document.getElementById("reg-password").value;
+  // ==========================================
+  // 2. ОБРОБКА РЕЄСТРАЦІЇ КОРИСТУВАЧА
+  // ==========================================
+  if (formRegister) {
+    formRegister.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  try {
-    const response = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
+      const name = document.getElementById("register-name").value.trim();
+      const email = document.getElementById("register-email").value.trim();
+      const password = document.getElementById("register-password").value;
+
+      if (password.length < 6) {
+        alert("Пароль має бути не менше 6 символів!");
+        return;
+      }
+
+      try {
+        // Використовуємо відносний шлях для автоматичного підлаштування під Railway
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Зберігаємо отримані дані в локальне сховище браузера
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+
+          alert(`🎉 Реєстрація успішна! Вітаємо, ${data.user.name}.`);
+          // Перенаправляємо на головну сторінку
+          window.location.href = "index.html";
+        } else {
+          // Виводимо повідомлення про помилку від сервера (наприклад, "Email вже існує")
+          alert(data.msg || "Сталася помилка під час реєстрації");
+        }
+      } catch (err) {
+        console.error("Помилка реєстрації:", err);
+        alert("Не вдалося з'єднатися з сервером. Перевірте, чи запущений ваш бекенд на Railway.");
+      }
     });
+  }
 
-    const data = await response.json();
+  // ==========================================
+  // 3. ЛОГІКА ВХОДУ (ЛОГІНУ)
+  // ==========================================
+  if (formLogin) {
+    formLogin.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    if (response.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userName", data.user.name);
-      window.location.href = "index.html";
-    } else {
-      alert(data.msg || "Помилка реєстрації");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Не вдалося з'єднатися з сервером");
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      try {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+
+          alert(`👋 З поверненням, ${data.user.name}!`);
+          window.location.href = "index.html";
+        } else {
+          alert(data.msg || "Неправильний Email або пароль");
+        }
+      } catch (err) {
+        console.error("Помилка входу:", err);
+        alert("Не вдалося з'єднатися з сервером.");
+      }
+    });
   }
 });
