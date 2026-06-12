@@ -13,7 +13,6 @@
       <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded ml-1">Admin</span></a>
       <nav class="space-x-6 font-medium">
         <a href="index.html" class="text-gray-600 hover:text-indigo-600">На головну сайту</a>
-        <a href="gallery.html" class="text-gray-600 hover:text-indigo-600">Перейти в Галерею</a>
       </nav>
     </div>
   </header>
@@ -43,7 +42,7 @@
     <div class="bg-indigo-900 text-white p-8 rounded-3xl shadow-xl flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-black">Панель керування ArtCanvas</h1>
-        <p class="text-indigo-200 text-sm mt-1">Моніторинг замовлень та додавання нових товарів</p>
+        <p class="text-indigo-200 text-sm mt-1">Моніторинг замовлень клієнтів</p>
       </div>
       <button id="btn-admin-logout" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition">ВИЙТИ</button>
     </div>
@@ -52,18 +51,17 @@
       
       <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
         <h2 class="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-          📥 Сповіщення про замовлення 
+          📥 Нові замовлення з сайту 
           <span id="orders-count" class="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full">0</span>
         </h2>
         
         <div id="orders-list" class="space-y-4 max-h-[650px] overflow-y-auto pr-2">
-          <p class="text-gray-400 text-center py-6">Завантаження нових замовлень...</p>
+          <p class="text-gray-400 text-center py-6">Завантаження замовлень...</p>
         </div>
       </div>
 
       <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 h-fit">
-        <h2 class="text-2xl font-black text-gray-900 mb-6">➕ Додати картину</h2>
-        
+        <h2 class="text-2xl font-black text-gray-900 mb-6">➕ Опублікувати картину</h2>
         <form id="form-add-painting" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Назва</label>
@@ -74,14 +72,14 @@
             <input type="number" id="price" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-sm">
           </div>
           <div>
-            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">URL Картинки</label>
+            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">URL Зображення</label>
             <input type="url" id="imageUrl" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-xs font-mono">
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Опис</label>
             <textarea id="description" rows="2" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none"></textarea>
           </div>
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition text-sm">Опублікувати</button>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition text-sm">Додати на вітрину</button>
         </form>
       </div>
 
@@ -120,7 +118,7 @@
             ordersList.innerHTML = "";
 
             if (orders.length === 0) {
-              ordersList.innerHTML = `<p class="text-center text-gray-400 py-12">Нових замовлень поки немає.</p>`;
+              ordersList.innerHTML = `<p class="text-center text-gray-400 py-12">Нових замовлень немає.</p>`;
               return;
             }
 
@@ -130,7 +128,7 @@
               
               let itemsText = order.items && order.items.length > 0 
                 ? order.items.map(i => `• ${i.title} (${i.price} грн)`).join("<br>")
-                : "Індивідуальний макет (фото / редактор)";
+                : "Індивідуальний макет картини";
 
               const statusColors = {
                 'pending': 'text-yellow-600 bg-yellow-50 border-yellow-200',
@@ -147,15 +145,15 @@
                 </div>
 
                 <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-gray-700">
-                  <p class="font-bold text-indigo-900 uppercase tracking-wide text-[10px] mb-1">👤 Контакти замовника:</p>
+                  <p class="font-bold text-indigo-900 uppercase tracking-wide text-[10px] mb-1">👤 Клієнт:</p>
                   <p><b>Ім'я:</b> ${order.buyerName}</p>
                   <p><b>Телефон:</b> <a href="tel:${order.buyerPhone}" class="text-indigo-600 hover:underline font-mono font-bold">${order.buyerPhone}</a></p>
                 </div>
 
                 <div class="text-sm text-gray-700 space-y-1">
-                  <p class="font-bold text-gray-900">Склад замовлення:</p>
+                  <p class="font-bold text-gray-900">Товари:</p>
                   <p class="text-gray-600 bg-white p-2.5 rounded-lg border border-gray-100 font-mono text-xs">${itemsText}</p>
-                  <p class="pt-1">📐 <b>Parametri:</b> ${order.specifications?.size || 'Стандарт'} | ${order.specifications?.material || 'Полотно'}</p>
+                  <p class="pt-1">📐 <b>Параметри:</b> ${order.specifications?.size || 'Стандарт'} | ${order.specifications?.material || 'Полотно'}</p>
                   ${order.specifications?.comment ? `<p class="text-xs bg-amber-50 p-2 rounded border border-amber-100 text-amber-800">💬 <b>Коментар:</b> "${order.specifications.comment}"</p>` : ''}
                 </div>
 
@@ -163,7 +161,7 @@
                   <div class="flex items-center space-x-2">
                     <label class="text-xs font-bold text-gray-500 uppercase">Статус:</label>
                     <select onchange="updateOrderStatus('${order.id}', this.value)" class="text-xs p-1.5 rounded-lg border outline-none font-semibold transition ${currentStatusColor}">
-                      <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Нове (Очікування)</option>
+                      <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ Нове</option>
                       <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>🛠️ В обробці</option>
                       <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>✅ Виконано</option>
                       <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Скасовано</option>
@@ -176,7 +174,7 @@
             });
           }
         } catch (err) {
-          ordersList.innerHTML = `<p class="text-center text-red-500 py-6">Не вдалося завантажити сповіщення.</p>`;
+          ordersList.innerHTML = `<p class="text-center text-red-500 py-6">Помилка завантаження.</p>`;
         }
       };
 
@@ -199,7 +197,7 @@
             alert(data.msg || "Не вдалося змінити статус.");
           }
         } catch (err) {
-          alert("Помилка зв'язку з сервером.");
+          alert("Помилка сервера.");
         }
       };
 
