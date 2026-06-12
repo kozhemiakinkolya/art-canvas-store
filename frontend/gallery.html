@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Галерея Картин | ArtCanvas</title>
+  <title>Галерея картин | ArtCanvas</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
@@ -13,82 +13,132 @@
       <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas</a>
       <nav class="hidden md:flex space-x-8 font-medium">
         <a href="index.html" class="text-gray-600 hover:text-indigo-600 transition">Головна</a>
-        <a href="gallery.html" class="text-indigo-600 hover:text-indigo-800">Галерея</a>
-        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Замовити по фото</a>
+        <a href="gallery.html" class="text-indigo-600 font-bold">Галерея</a>
+        <a href="custom-order.html" class="text-gray-600 hover:text-indigo-600 transition">Замовити по foto</a>
         <a href="editor.html" class="text-gray-600 hover:text-indigo-600 transition">Онлайн-Редактор</a>
-        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Про автора</a>
+        <a href="admin.html" class="text-gray-600 hover:text-indigo-600 transition">Адмінка</a>
       </nav>
-      <div id="auth-zone" class="flex items-center space-x-4">
+      <div id="auth-zone">
         <a href="auth.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition shadow">Увійти</a>
       </div>
     </div>
   </header>
 
-  <main class="flex-grow container mx-auto px-6 py-8">
-    <h1 class="text-3xl font-extrabold text-gray-950 mb-8">Каталог авторських картин</h1>
+  <section class="bg-indigo-900 text-white py-12 text-center">
+    <h1 class="text-4xl font-black tracking-tight">Каталог авторських картин</h1>
+    <p class="text-indigo-200 mt-2 text-lg">Оберіть готовий шедевр для вашого інтер'єру</p>
+  </section>
 
-    <div class="flex flex-col md:flex-row gap-8">
-      
-      <aside class="w-full md:w-1/4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit sticky top-24">
-        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span>Filter</span> Фільтрація
-        </h3>
-        
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Категорія</label>
-            <select id="filter-category" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
-              <option value="">Всі жанри</option>
-              <option value="Пейзаж">Пейзаж</option>
-              <option value="Портрет">Портрет</option>
-              <option value="Абстракція">Абстракція</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Техніка виконання</label>
-            <select id="filter-technique" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
-              <option value="">Всі техніки</option>
-              <option value="Олія">Олія</option>
-              <option value="Акрил">Акрил</option>
-              <option value="Акварель">Акварель</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Макс. ціна: <span id="price-val">10000</span> грн</label>
-            <input type="range" id="filter-price" min="500" max="20000" step="500" value="20000" class="w-full accent-indigo-600">
-          </div>
-
-          <button id="btn-apply-filters" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition">
-            Застосувати
-          </button>
-        </div>
-      </aside>
-
-      <section class="w-full md:w-3/4">
-        <div id="paintings-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="col-span-full text-center py-12 text-gray-500">Завантаження картин...</div>
-        </div>
-      </section>
-
+  <main class="container mx-auto px-6 py-12 flex-grow">
+    <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="col-span-full text-center py-12">
+        <p class="text-gray-500 text-lg animate-pulse">Завантаження каталогу картин...</p>
+      </div>
     </div>
   </main>
 
-  <div id="purchase-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-      <button id="modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-      <h3 class="text-xl font-bold text-gray-900 mb-2" id="modal-title">Підтвердження покупки</h3>
-      <p class="text-gray-600 mb-6">Ви дійсно хочете придбати картину <span id="modal-painting-name" class="font-bold text-indigo-600"></span>?</p>
-      
-      <div class="flex gap-4">
-        <button id="modal-cancel" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg transition">Скасувати</button>
-        <button id="modal-confirm" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition">Купити</button>
-      </div>
-    </div>
-  </div>
+  <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-gray-800 mt-auto">
+    <p>&copy; 2026 ArtCanvas Store. Всі права захищені.</p>
+  </footer>
 
-  <script src="app.js"></script>
-  <script src="gallery.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 1. ПЕРЕВІРКА АВТОРИЗАЦІЇ ДЛЯ МЕНЮ
+      const authZone = document.getElementById("auth-zone");
+      const token = localStorage.getItem("token");
+      const userRaw = localStorage.getItem("user");
+
+      if (authZone && token && userRaw) {
+        const user = JSON.parse(userRaw);
+        authZone.innerHTML = `
+          <div class="flex items-center space-x-3 bg-gray-100 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
+            <span class="text-sm font-semibold text-gray-700">👤 ${user.name}</span>
+            <button id="btn-logout" class="text-xs text-red-500 hover:text-red-700 font-bold transition ml-2">ВИЙТИ</button>
+          </div>
+        `;
+        document.getElementById("btn-logout").addEventListener("click", () => {
+          localStorage.clear();
+          window.location.reload();
+        });
+      }
+
+      // 2. ЗАВАНТАЖЕННЯ КАРТИН З БЕКЕНДУ
+      const galleryGrid = document.getElementById("gallery-grid");
+      try {
+        const response = await fetch("/api/paintings");
+        const paintings = await response.json();
+
+        if (response.ok) {
+          galleryGrid.innerHTML = ""; // Очищаємо текст завантаження
+
+          if (paintings.length === 0) {
+            galleryGrid.innerHTML = `<p class="text-center text-gray-500 py-12 col-span-full">Каталог порожній. Додайте першу картину через адмінку!</p>`;
+            return;
+          }
+
+          paintings.forEach(art => {
+            const card = document.createElement("div");
+            card.className = "bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col hover:shadow-lg transition";
+            card.innerHTML = `
+              <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-64 object-cover" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=500'">
+              <div class="p-6 flex-grow flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-indigo-500">${art.category || 'Живопис'}</span>
+                  <h3 class="text-xl font-bold mt-1 text-gray-900">${art.title}</h3>
+                  <p class="text-sm text-gray-500 mt-2 line-clamp-3">${art.description || 'Опис картини.'}</p>
+                  <div class="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl">
+                    <div><strong>Техніка:</strong> ${art.technique || 'Олія'}</div>
+                    <div><strong>Розмір:</strong> ${art.size || 'Власний'}</div>
+                  </div>
+                </div>
+                <div class="mt-6 flex justify-between items-center pt-4 border-t border-gray-100">
+                  <span class="text-2xl font-black text-indigo-600">${art.price} грн</span>
+                  <button onclick="orderPainting('${art._id}', '${art.title}', ${art.price})" class="bg-indigo-600 text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-indigo-700 transition">Замовити</button>
+                </div>
+              </div>
+            `;
+            galleryGrid.appendChild(card);
+          });
+        }
+      } catch (err) {
+        console.error("Помилка:", err);
+        galleryGrid.innerHTML = `<p class="text-center text-red-500 py-12 col-span-full">Не вдалося завантажити картині. Помилка з'єднання з сервером.</p>`;
+      }
+    });
+
+    // 3. ФУНКЦІЯ ОФОРМЛЕННЯ ЗАМОВЛЕННЯ
+    async function orderPainting(id, title, price) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("🔒 Будь ласка, авторизуйтесь в системі, щоб зробити замовлення!");
+        window.location.href = "auth.html";
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/paintings/order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            orderType: "catalog",
+            totalPrice: price,
+            items: JSON.stringify([{ id, title, price }])
+          })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(`🎉 Успіх! ${data.msg}\nВи замовили: "${title}".`);
+        } else {
+          alert(data.msg || "Помилка при створенні замовлення.");
+        }
+      } catch (err) {
+        alert("Помилка зв'язку з сервером.");
+      }
+    }
+  </script>
 </body>
 </html>
