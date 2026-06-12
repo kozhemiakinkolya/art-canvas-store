@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btnSubmit.innerText = "Надсилання...";
       btnSubmit.disabled = true;
 
-      const response = await fetch("http://localhost:5000/api/paintings/order", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`

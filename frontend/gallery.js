@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modalConfirm.innerText = "Обробка...";
       modalConfirm.disabled = true;
 
-      const response = await fetch("http://localhost:5000/api/paintings/order", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
