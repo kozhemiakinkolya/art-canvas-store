@@ -134,4 +134,69 @@ app.get('/api/paintings', (req, res) => {
 });
 
 // Додавання нової картини на продаж (через admin.html)
-app.
+app.post('/api/paintings/add', upload.single('image'), (req, res) => {
+  const { title, price, category, technique, size, description } = req.body;
+  let paintings = loadData(PAINTINGS_FILE);
+
+  if (!req.file) {
+    return res.status(400).json({ msg: 'Будь ласка, завантажте фотографію картини!' });
+  }
+
+  const newPainting = {
+    _id: Date.now().toString(),
+    title,
+    price: Number(price),
+    category,
+    technique,
+    size,
+    description,
+    imageUrl: `/uploads/${req.file.filename}` // Локальне посилання всередині сервера
+  };
+
+  paintings.push(newPainting);
+  saveData(PAINTINGS_FILE, paintings);
+
+  res.json({ msg: '🎉 Картину успішно додано в загальний каталог!', painting: newPainting });
+});
+
+// ==========================================
+// 🛒 API РОУТИ ДЛЯ ОФОРМЛЕННЯ ЗАМОВЛЕНЬ
+// ==========================================
+
+// Створення замовлення (для всіх типів: з каталогу, завантаження фото, Canvas)
+app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, res) => {
+  const { orderType, size, material, comment, canvasImage, totalPrice, items } = req.body;
+  let orders = loadData(ORDERS_FILE);
+
+  let customImage = null;
+  if (orderType === 'by_photo' && req.file) {
+    customImage = `/uploads/${req.file.filename}`;
+  } else if (orderType === 'canvas_editor') {
+    customImage = canvasImage; // рядок у форматі base64
+  }
+
+  const newOrder = {
+    id: Date.now().toString(),
+    userId: req.user.id,
+    orderType,
+    items: items ? JSON.parse(items) : [],
+    customImage,
+    specifications: { size, material, comment },
+    totalPrice: Number(totalPrice),
+    status: 'pending',
+    createdAt: new Date()
+  };
+
+  orders.push(newOrder);
+  saveData(ORDERS_FILE, orders);
+  res.json({ msg: '🎉 Замовлення успішно створено!', order: newOrder });
+});
+
+// Запасний роут: якщо користувач оновить сторінку вручну, сервер поверне головну сторінку
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
+// Запуск сервера (порт автоматично виділяється платформою Railway)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Сервер успішно запущено на порту ${PORT}`));
