@@ -65,14 +65,13 @@ const adminMiddleware = (req, res, next) => {
   }
 };
 
-// --- РОУТИ АВТОРИЗАЦІЇ ЗА НОМЕРОМ ТЕЛЕФОНУ ---
+// --- РОУТИ АВТОРИЗАЦІЇ (ТЕЛЕФОН) ---
 app.post('/api/auth/register', async (req, res) => {
   const { name, phone, password } = req.body;
   let users = loadData(USERS_FILE);
   
-  // Перевірка унікальності номера телефону
   if (users.find(u => u.phone === phone)) {
-    return res.status(400).json({ msg: 'Користувач з цим номером телефону вже зареєстрований!' });
+    return res.status(400).json({ msg: 'Користувач з цим номером телефону вже існує!' });
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -149,7 +148,7 @@ app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, r
   res.json({ msg: '🎉 Замовлення успішно створено!', order: newOrder });
 });
 
-// 👑 РОУТИ АДМІНІСТРАТОРА: ОТРИМАННЯ ЗАМОВЛЕНЬ + ТЕЛЕФОНИ КЛІЄНТІВ
+// 👑 РОУТИ АДМІНІСТРАТОРА: ОТРИМАННЯ ЗАМОВЛЕНЬ + ТЕЛЕФОНИ
 app.get('/api/admin/orders', adminMiddleware, (req, res) => {
   let orders = loadData(ORDERS_FILE);
   let users = loadData(USERS_FILE);
@@ -179,7 +178,7 @@ app.put('/api/admin/orders/:id/status', adminMiddleware, (req, res) => {
 
   orders[orderIndex].status = status;
   saveData(ORDERS_FILE, orders);
-  res.json({ msg: `Статус замовлення №${orderId} змінено!` });
+  res.json({ msg: `Статус замовлення №${orderId} успішно змінено!` });
 });
 
 app.get('*', (req, res) => {
