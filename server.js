@@ -65,7 +65,7 @@ const adminMiddleware = (req, res, next) => {
   }
 };
 
-// --- РОУТИ АВТОРИЗАЦІЇ (ТЕЛЕФОН) ---
+// --- РОУТИ АВТОРИЗАЦІЇ ЗА ТЕЛЕФОНОМ ---
 app.post('/api/auth/register', async (req, res) => {
   const { name, phone, password } = req.body;
   let users = loadData(USERS_FILE);
@@ -116,7 +116,7 @@ app.get('/api/paintings', (req, res) => {
 app.post('/api/paintings/add', adminMiddleware, (req, res) => {
   const { title, price, category, technique, size, description, imageUrl } = req.body;
   let paintings = loadData(PAINTINGS_FILE);
-  if (!imageUrl) return res.status(400).json({ msg: 'Вкажіть посилання на фото!' });
+  if (!imageUrl) return res.status(400).json({ msg: 'Вкажіть посилання на photo!' });
 
   const newPainting = { _id: Date.now().toString(), title, price: Number(price), category, technique, size, description, imageUrl };
   paintings.push(newPainting);
@@ -148,7 +148,7 @@ app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, r
   res.json({ msg: '🎉 Замовлення успішно створено!', order: newOrder });
 });
 
-// 👑 РОУТИ АДМІНІСТРАТОРА: ОТРИМАННЯ ЗАМОВЛЕНЬ + ТЕЛЕФОНИ
+// 👑 РОУТИ АДМІНІСТРАТОРА: ОТРИМАННЯ ЗАМОВЛЕНЬ + КОНТАКТИ ТЕЛЕФОНІВ
 app.get('/api/admin/orders', adminMiddleware, (req, res) => {
   let orders = loadData(ORDERS_FILE);
   let users = loadData(USERS_FILE);
