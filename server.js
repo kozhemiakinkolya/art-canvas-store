@@ -101,4 +101,102 @@ app.post('/api/auth/login', async (req, res) => {
 // ==========================================
 
 // Отримання списку всіх картин на продаж
-app.get('/api/paintings', (
+app.get('/api/paintings', (req, res) => {
+  let paintings = loadData(PAINTINGS_FILE);
+  
+  // Якщо база даних порожня (перший запуск), створимо демо-товари автоматично
+  if (paintings.length === 0) {
+    paintings = [
+      { 
+        _id: "1", 
+        title: "Захід сонця над Дніпром", 
+        price: 2500, 
+        category: "Пейзаж", 
+        technique: "Олія", 
+        size: "50x70 см", 
+        imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=500", 
+        description: "Теплий літній вечір на березі річки, виконаний класичними мазками олією." 
+      },
+      { 
+        _id: "2", 
+        title: "Абстрактна думка", 
+        price: 4200, 
+        category: "Абстракція", 
+        technique: "Акрил", 
+        size: "60x60 см", 
+        imageUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=500", 
+        description: "Яскрава інтер'єрна робота, що передає хаос та гармонію людських емоцій." 
+      }
+    ];
+    saveData(PAINTINGS_FILE, paintings);
+  }
+  res.json(paintings);
+});
+
+// 🚀 ОНОВЛЕНО: Додавання нової картини на продаж через прямое URL-посилання з інтернету
+app.post('/api/paintings/add', (req, res) => {
+  const { title, price, category, technique, size, description, imageUrl } = req.body;
+  let paintings = loadData(PAINTINGS_FILE);
+
+  if (!imageUrl) {
+    return res.status(400).json({ msg: 'Будь ласка, вкажіть дійсне посилання на фото картини!' });
+  }
+
+  const newPainting = {
+    _id: Date.now().toString(),
+    title,
+    price: Number(price),
+    category,
+    technique,
+    size,
+    description,
+    imageUrl // зберігаємо чисте посилання на картинку з інтернету
+  };
+
+  paintings.push(newPainting);
+  saveData(PAINTINGS_FILE, paintings);
+
+  res.json({ msg: '🎉 Картину успішно додано в загальний каталог!', painting: newPainting });
+});
+
+// ==========================================
+// 🛒 API РОУТИ ДЛЯ ОФОРМЛЕННЯ ЗАМОВЛЕНЬ
+// ==========================================
+
+// Створення замовлення (для всіх типів: з каталогу, завантаження фото, Canvas)
+app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, res) => {
+  const { orderType, size, material, comment, canvasImage, totalPrice, items } = req.body;
+  let orders = loadData(ORDERS_FILE);
+
+  let customImage = null;
+  if (orderType === 'by_photo' && req.file) {
+    customImage = `/uploads/${req.file.filename}`;
+  } else if (orderType === 'canvas_editor') {
+    customImage = canvasImage; // рядок у форматі base64 з конструктора полотна
+  }
+
+  const newOrder = {
+    id: Date.now().toString(),
+    userId: req.user.id,
+    orderType,
+    items: items ? JSON.parse(items) : [],
+    customImage,
+    specifications: { size, material, comment },
+    totalPrice: Number(totalPrice),
+    status: 'pending',
+    createdAt: new Date()
+  };
+
+  orders.push(newOrder);
+  saveData(ORDERS_FILE, orders);
+  res.json({ msg: '🎉 Замовлення успішно створено!', order: newOrder });
+});
+
+// SPA fallback: якщо користувач оновить сторінку вручну в браузері, сервер м'яко поверне index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
+// Запуск сервера (порт автоматично підлаштовується під хмару Railway)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Сервер успішно запущено на порту ${PORT}`));
