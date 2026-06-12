@@ -34,29 +34,29 @@ const upload = multer({ storage });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key_artcanvas';
 
-// 🔒 МІДЛВАР ДЛЯ ПЕРЕВІРКИ ЗВИЧАЙНИХ КОРИСТУВАЧІВ
+// Мідлвар захисту для клієнтів
 const authMiddleware = (req, res, next) => {
   const token = req.header('Authorization');
-  if (!token) return res.status(401).json({ msg: 'Доступ заборонено. Будь ласка, авторизуйтесь!' });
+  if (!token) return res.status(401).json({ msg: 'Доступ заборонено. Авторизуйтесь!' });
   try {
     const cleanToken = token.split(' ')[1] || token;
     const decoded = jwt.verify(cleanToken, JWT_SECRET);
     req.user = decoded.user;
     next();
   } catch (err) { 
-    res.status(401).json({ msg: 'Сесія застаріла або токен недійсний' }); 
+    res.status(401).json({ msg: 'Сесія застаріла' }); 
   }
 };
 
-// 👑 МІДЛВАР ДЛЯ ПЕРЕВІРКИ ПРАВ АДМІНІСТРАТОРА
+// Мідлвар захисту для адміністратора
 const adminMiddleware = (req, res, next) => {
   const token = req.header('Authorization');
-  if (!token) return res.status(401).json({ msg: 'Доступ обмежено. Потрібні права адміністратора!' });
+  if (!token) return res.status(401).json({ msg: 'Потрібні права адміністратора!' });
   try {
     const cleanToken = token.split(' ')[1] || token;
     const decoded = jwt.verify(cleanToken, JWT_SECRET);
     if (decoded.user.role !== 'admin') {
-      return res.status(403).json({ msg: 'У вас немає прав доступу до цієї операції!' });
+      return res.status(403).json({ msg: 'У вас немає доступу!' });
     }
     req.user = decoded.user;
     next();
@@ -65,15 +65,25 @@ const adminMiddleware = (req, res, next) => {
   }
 };
 
-// ==========================================
-// 🔐 API РОУТИ АВТОРИЗАЦІЇ
-// ==========================================
+// --- РОУТИ АВТОРИЗАЦІЇ ---
+app.post('/api/auth/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  let users = loadData(USERS_FILE);
+  if (users.find(u => u.email === email)) return res.status(400).json({ msg: 'Email вже існує' });
 
-// Вхід для звичайних клієнтів
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  const newUser = { id: Date.now().toString(), name, email, password: hashedPassword };
+  
+  users.push(newUser);
+  saveData(USERS_FILE, users);
+  const token = jwt.sign({ user: { id: newUser.id, role: 'user' } }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ token, user: { id: newUser.id, name: newUser.name, email: newUser.email } });
+});
+
 app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
   let users = loadData(USERS_FILE);
-  
   const user = users.find(u => u.email === email);
   if (!user) return res.status(400).json({ msg: 'Неправильний Email або пароль' });
 
@@ -84,91 +94,37 @@ app.post('/api/auth/login', async (req, res) => {
   res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
 });
 
-// Реєстрація клієнтів
-app.post('/api/auth/register', async (req, res) => {
-  const { name, email, password } = req.body;
-  let users = loadData(USERS_FILE);
-  
-  if (users.find(u => u.email === email)) {
-    return res.status(400).json({ msg: 'Користувач з таким Email вже існує' });
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const newUser = { id: Date.now().toString(), name, email, password: hashedPassword };
-  users.push(newUser);
-  saveData(USERS_FILE, users);
-
-  const token = jwt.sign({ user: { id: newUser.id, role: 'user' } }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, user: { id: newUser.id, name: newUser.name, email: newUser.email } });
-});
-
-// 👑 ВХІД ДЛЯ АДМІНІСТРАТОРА (УНІКАЛЬНИЙ ЛОГІН І ПАРОЛЬ)
 app.post('/api/auth/admin-login', (req, res) => {
   const { login, password } = req.body;
-
-  // Твої унікальні дані для входу в адмінку (можеш змінити на власні)
-  const ADMIN_LOGIN = "admin";
-  const ADMIN_PASSWORD = "Admin777Canvas"; 
-
-  if (login === ADMIN_LOGIN && password === ADMIN_PASSWORD) {
-    // Видаємо токен з роллю 'admin'
+  if (login === "admin" && password === "Admin777Canvas") {
     const token = jwt.sign({ user: { id: "admin_root", role: "admin" } }, JWT_SECRET, { expiresIn: '1d' });
     return res.json({ token, msg: "Успішний вхід в панель керування!" });
-  } else {
-    return res.status(401).json({ msg: "Невірний логін або пароль адміністратора!" });
   }
+  return res.status(401).json({ msg: "Невірний логін або пароль адміна!" });
 });
 
-// ==========================================
-// 🎨 API РОУТИ ДЛЯ КАТАЛОГУ
-// ==========================================
-
+// --- РОУТИ ГАЛЕРЕЇ ---
 app.get('/api/paintings', (req, res) => {
-  let paintings = loadData(PAINTINGS_FILE);
-  res.json(paintings);
+  res.json(loadData(PAINTINGS_FILE));
 });
 
-// 🚀 ЗАХИЩЕНО: тепер додавати картини може ТІЛЬКИ авторизований адмін
 app.post('/api/paintings/add', adminMiddleware, (req, res) => {
   const { title, price, category, technique, size, description, imageUrl } = req.body;
   let paintings = loadData(PAINTINGS_FILE);
+  if (!imageUrl) return res.status(400).json({ msg: 'Вкажіть посилання на фото!' });
 
-  if (!imageUrl) {
-    return res.status(400).json({ msg: 'Будь ласка, вкажіть дійсне посилання на фото картини!' });
-  }
-
-  const newPainting = {
-    _id: Date.now().toString(),
-    title,
-    price: Number(price),
-    category,
-    technique,
-    size,
-    description,
-    imageUrl
-  };
-
+  const newPainting = { _id: Date.now().toString(), title, price: Number(price), category, technique, size, description, imageUrl };
   paintings.push(newPainting);
   saveData(PAINTINGS_FILE, paintings);
-
-  res.json({ msg: '🎉 Картину успішно додано в загальний каталог!', painting: newPainting });
+  res.json({ msg: '🎉 Картину успішно додано!', painting: newPainting });
 });
 
-// ==========================================
-// 🛒 API РОУТИ ДЛЯ ОФОРМЛЕННЯ ЗАМОВЛЕНЬ
-// ==========================================
+// --- РОУТИ ЗАМОВЛЕНЬ ---
 app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, res) => {
   const { orderType, size, material, comment, canvasImage, totalPrice, items } = req.body;
   let orders = loadData(ORDERS_FILE);
 
-  let customImage = null;
-  if (orderType === 'by_photo' && req.file) {
-    customImage = `/uploads/${req.file.filename}`;
-  } else if (orderType === 'canvas_editor') {
-    customImage = canvasImage;
-  }
+  let customImage = orderType === 'by_photo' && req.file ? `/uploads/${req.file.filename}` : (orderType === 'canvas_editor' ? canvasImage : null);
 
   const newOrder = {
     id: Date.now().toString(),
@@ -192,4 +148,4 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Сервер успішно запущено на порту ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Сервер запущено на порту ${PORT}`));
