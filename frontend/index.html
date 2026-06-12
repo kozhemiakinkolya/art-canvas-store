@@ -3,42 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArtCanvas | Магазин картин та власного живопису</title>
+  <title>ArtCanvas — Студія друку та картин на полотні</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-  <header class="bg-white shadow-md sticky top-0 z-50">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas</a>
-      <nav class="hidden md:flex space-x-8 font-medium">
-        <a href="index.html">Головна</a>
-        <a href="gallery.html">Галерея</a>
-        <a href="custom-order.html">Замовити по foto</a>
-        <a href="editor.html">Онлайн-Редактор</a>
-        <a href="admin.html">Адмінка</a>
+      <a href="index.html" class="text-2xl font-black text-indigo-600 tracking-wider">ArtCanvas</a>
+      <nav class="hidden md:flex space-x-6 font-medium text-gray-600">
+        <a href="index.html" class="hover:text-indigo-600 transition">Головна</a>
+        <a href="gallery.html" class="hover:text-indigo-600 transition">Галерея картин</a>
+        <a href="admin.html" class="text-red-500 hover:text-red-700 font-bold">Панель адміна</a>
       </nav>
-      <div id="auth-zone">
-        <a href="auth.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition shadow">Увійти</a>
+      <div id="auth-zone" class="space-x-3">
+        <button onclick="toggleModal('login-modal')" class="text-sm font-semibold text-gray-600 hover:text-indigo-600">Увійти</button>
+        <button onclick="toggleModal('register-modal')" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl transition">Реєстрація</button>
       </div>
     </div>
   </header>
 
-  <main class="flex-grow flex items-center justify-center bg-gradient-to-r from-indigo-900 to-purple-900 text-white py-24 px-6 text-center">
-    <div class="max-w-3xl">
-      <h1 class="text-5xl font-black tracking-tight leading-tight md:text-6xl">Оживіть свій інтер'єр унікальним живописом</h1>
-      <p class="text-indigo-200 mt-6 text-lg md:text-xl">Купуйте готові картини українських художників або створюйте власні макети в нашому онлайн-конструкторі полотна.</p>
-      <div class="mt-10 flex flex-wrap justify-center gap-4">
-        <a href="gallery.html" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-4 rounded-xl transition shadow-lg text-lg">Переглянути Галерею</a>
-        <a href="editor.html" class="bg-white text-indigo-900 hover:bg-gray-100 font-bold px-8 py-4 rounded-xl transition shadow-lg text-lg">Онлайн-Редактор полотен</a>
-      </div>
+  <section class="container mx-auto px-6 py-16 text-center space-y-6">
+    <h1 class="text-4xl md:text-6xl font-black text-gray-900 leading-tight">Твій простір — твої правила.<br><span class="text-indigo-600">Друк картин на полотні</span></h1>
+    <p class="text-gray-500 max-w-xl mx-auto text-sm md:text-base">Завантажуй власні фотографії, купуй готові картини художників або створюй унікальні колажі в нашому онлайн-конструкторі.</p>
+  </section>
+
+  <div id="login-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
+      <button onclick="toggleModal('login-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">＆times;</button>
+      <h3 class="text-2xl font-black mb-4 text-gray-900">Вхід до кабінету</h3>
+      <form id="form-login" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Номер телефону</label>
+          <input type="tel" id="login-phone" placeholder="+380XXXXXXXXX" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Пароль</label>
+          <input type="password" id="login-password" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">Авторизуватися</button>
+      </form>
     </div>
-  </main>
+  </div>
 
-  <footer class="bg-gray-900 text-gray-500 text-center py-6 border-t border-gray-800">
-    <p>&copy; 2026 ArtCanvas Store. Дипломний проєкт.</p>
-  </footer>
+  <div id="register-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
+      <button onclick="toggleModal('register-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">＆times;</button>
+      <h3 class="text-2xl font-black mb-4 text-gray-900">Створити профіль</h3>
+      <form id="form-register" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ваше ім'я</label>
+          <input type="text" id="reg-name" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Номер телефону</label>
+          <input type="tel" id="reg-phone" placeholder="+380XXXXXXXXX" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Придумайте пароль</label>
+          <input type="password" id="reg-password" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">Зареєструватися</button>
+      </form>
+    </div>
+  </div>
 
-  <script src="navbar.js"></script>
+  <script>
+    function toggleModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.toggle('hidden');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const authZone = document.getElementById("auth-zone");
+
+      const updateNavbar = () => {
+        const user = localStorage.getItem("user");
+        if (user) {
+          const userData = JSON.parse(user);
+          authZone.innerHTML = `
+            <span class="text-sm font-semibold text-gray-700">👋 ${userData.name}</span>
+            <button id="btn-logout" class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-bold hover:bg-red-200 transition">Вийти</button>
+          `;
+          document.getElementById("btn-logout").addEventListener("click", () => {
+            localStorage.clear();
+            window.location.reload();
+          });
+        }
+      };
+
+      // Логіка реєстрації (надіслання Номеру Телефону на бекенд)
+      document.getElementById("form-register").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("reg-name").value.trim();
+        const phone = document.getElementById("reg-phone").value.trim();
+        const password = document.getElementById("reg-password").value;
+
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, phone, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem("userToken", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          alert("🎉 Ви успішно зареєструвалися за номером телефону!");
+          window.location.reload();
+        } else {
+          alert(data.msg);
+        }
+      });
+
+      // Логіка входу (вхід через Телефон)
+      document.getElementById("form-login").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const phone = document.getElementById("login-phone").value.trim();
+        const password = document.getElementById("login-password").value;
+
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem("userToken", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          window.location.reload();
+        } else {
+          alert(data.msg);
+        }
+      });
+
+      updateNavbar();
+    });
+  </script>
 </body>
 </html>
