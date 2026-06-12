@@ -18,7 +18,7 @@
   <main class="flex-grow flex items-center justify-center container mx-auto px-4 py-12">
     <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-xl border border-gray-100">
       <h2 class="text-2xl font-black text-gray-900 mb-2">Додати нову картину на продаж</h2>
-      <p class="text-sm text-gray-500 mb-6">Заповніть картку товару, щоб вона миттєво з'явилася в загальному каталозі.</p>
+      <p class="text-sm text-gray-500 mb-6">Введіть дані картини та посилання на її зображення в інтернеті.</p>
 
       <form id="form-add-painting" class="space-y-4">
         <div>
@@ -59,8 +59,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Фотографія картини</label>
-          <input type="file" id="p-file" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Посилання на фото картини (URL)</label>
+          <input type="url" id="p-image-url" required placeholder="https://images.unsplash.com/..." class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
         </div>
 
         <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-md mt-4">
@@ -74,20 +74,23 @@
     document.getElementById('form-add-painting').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const formData = new FormData();
-      formData.append('title', document.getElementById('p-title').value.trim());
-      formData.append('price', document.getElementById('p-price').value);
-      formData.append('category', document.getElementById('p-category').value);
-      formData.append('technique', document.getElementById('p-technique').value.trim());
-      formData.append('size', document.getElementById('p-size').value.trim());
-      formData.append('description', document.getElementById('p-description').value.trim());
-      formData.append('image', document.getElementById('p-file').files[0]);
+      const bodyData = {
+        title: document.getElementById('p-title').value.trim(),
+        price: document.getElementById('p-price').value,
+        category: document.getElementById('p-category').value,
+        technique: document.getElementById('p-technique').value.trim(),
+        size: document.getElementById('p-size').value.trim(),
+        description: document.getElementById('p-description').value.trim(),
+        imageUrl: document.getElementById('p-image-url').value.trim()
+      };
 
       try {
         const response = await fetch('/api/paintings/add', {
           method: 'POST',
-          body: formData
-          // Headers не потрібні, браузер сам виставить multipart/form-data
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bodyData)
         });
 
         const data = await response.json();
