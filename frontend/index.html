@@ -10,16 +10,22 @@
 
   <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-black text-indigo-600 tracking-wider">ArtCanvas</a>
-      <nav class="hidden md:flex space-x-6 font-medium text-gray-600">
+      
+      <a href="index.html" class="text-2xl font-black text-indigo-600 tracking-wider flex-shrink-0">
+        ArtCanvas
+      </a>
+      
+      <nav class="hidden md:flex space-x-6 font-medium text-gray-600 mx-4">
         <a href="index.html" class="hover:text-indigo-600 transition">Головна</a>
         <a href="gallery.html" class="hover:text-indigo-600 transition">Галерея картин</a>
-        <a href="admin.html" class="text-red-500 hover:text-red-700 font-bold">Панель адміна</a>
+        <a href="admin.html" class="text-red-500 hover:text-red-700 font-bold transition">Панель адміна</a>
       </nav>
-      <div id="auth-zone" class="space-x-3">
-        <button onclick="toggleModal('login-modal')" class="text-sm font-semibold text-gray-600 hover:text-indigo-600">Увійти</button>
-        <button onclick="toggleModal('register-modal')" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl transition">Реєстрація</button>
+      
+      <div id="auth-zone" class="flex items-center space-x-4 flex-shrink-0 min-w-[180px] justify-end">
+        <button onclick="toggleModal('login-modal')" class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition">Увійти</button>
+        <button onclick="toggleModal('register-modal')" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl transition shadow-sm">Реєстрація</button>
       </div>
+
     </div>
   </header>
 
@@ -29,113 +35,132 @@
   </section>
 
   <div id="login-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative animate-fade-in">
       <button onclick="toggleModal('login-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">＆times;</button>
       <h3 class="text-2xl font-black mb-4 text-gray-900">Вхід до кабінету</h3>
       <form id="form-login" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Номер телефону</label>
-          <input type="tel" id="login-phone" placeholder="+380XXXXXXXXX" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+          <input type="tel" id="login-phone" placeholder="+380XXXXXXXXX" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-indigo-500 transition">
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Пароль</label>
-          <input type="password" id="login-password" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+          <input type="password" id="login-password" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-indigo-500 transition">
         </div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">Авторизуватися</button>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow">Авторизуватися</button>
       </form>
     </div>
   </div>
 
   <div id="register-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative animate-fade-in">
       <button onclick="toggleModal('register-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">＆times;</button>
       <h3 class="text-2xl font-black mb-4 text-gray-900">Створити профіль</h3>
       <form id="form-register" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ваше ім'я</label>
-          <input type="text" id="reg-name" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+          <input type="text" id="reg-name" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-indigo-500 transition">
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Номер телефону</label>
-          <input type="tel" id="reg-phone" placeholder="+380XXXXXXXXX" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+          <input type="tel" id="reg-phone" placeholder="+380XXXXXXXXX" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-indigo-500 transition">
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Придумайте пароль</label>
-          <input type="password" id="reg-password" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+          <input type="password" id="reg-password" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-indigo-500 transition">
         </div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">Зареєструватися</button>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow">Зареєструватися</button>
       </form>
     </div>
   </div>
 
   <script>
+    // Функція відкриття/закриття модальних вікон
     function toggleModal(id) {
       const modal = document.getElementById(id);
-      modal.classList.toggle('hidden');
+      if (modal) modal.classList.toggle('hidden');
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       const authZone = document.getElementById("auth-zone");
 
+      // Перевірка сесії користувача та безпечна зміна кнопок без руйнування флекс-контейнера
       const updateNavbar = () => {
         const user = localStorage.getItem("user");
         if (user) {
-          const userData = JSON.parse(user);
-          authZone.innerHTML = `
-            <span class="text-sm font-semibold text-gray-700">👋 ${userData.name}</span>
-            <button id="btn-logout" class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-bold hover:bg-red-200 transition">Вийти</button>
-          `;
-          document.getElementById("btn-logout").addEventListener("click", () => {
-            localStorage.clear();
-            window.location.reload();
-          });
+          try {
+            const userData = JSON.parse(user);
+            authZone.innerHTML = `
+              <span class="text-sm font-semibold text-gray-700 truncate max-w-[120px]">👋 ${userData.name}</span>
+              <button id="btn-logout" class="text-xs bg-red-50 text-red-600 px-3 py-2 rounded-xl font-bold hover:bg-red-100 transition whitespace-nowrap">Вийти</button>
+            `;
+            
+            // Навішуємо подію виходу
+            document.getElementById("btn-logout").addEventListener("click", () => {
+              localStorage.clear();
+              window.location.reload();
+            });
+          } catch (e) {
+            console.error("Помилка парсингу сесії користувача", e);
+          }
         }
       };
 
-      // Логіка реєстрації (надіслання Номеру Телефону на бекенд)
+      // Сабміт реєстрації
       document.getElementById("form-register").addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("reg-name").value.trim();
         const phone = document.getElementById("reg-phone").value.trim();
         const password = document.getElementById("reg-password").value;
 
-        const response = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, phone, password })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.setItem("userToken", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          alert("🎉 Ви успішно зареєструвалися за номером телефону!");
-          window.location.reload();
-        } else {
-          alert(data.msg);
+        try {
+          const response = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, phone, password })
+          });
+          const data = await response.json();
+          
+          if (response.ok) {
+            localStorage.setItem("userToken", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            alert("🎉 Реєстрація успішна!");
+            window.location.reload();
+          } else {
+            alert(data.msg || "Помилка реєстрації");
+          }
+        } catch (err) {
+          alert("Помилка з'єднання з сервером");
         }
       });
 
-      // Логіка входу (вхід через Телефон)
+      // Сабміт авторизації
       document.getElementById("form-login").addEventListener("submit", async (e) => {
         e.preventDefault();
         const phone = document.getElementById("login-phone").value.trim();
         const password = document.getElementById("login-password").value;
 
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone, password })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.setItem("userToken", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          window.location.reload();
-        } else {
-          alert(data.msg);
+        try {
+          const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone, password })
+          });
+          const data = await response.json();
+          
+          if (response.ok) {
+            localStorage.setItem("userToken", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            window.location.reload();
+          } else {
+            alert(data.msg || "Невірні дані для входу");
+          }
+        } catch (err) {
+          alert("Помилка з'єднання з сервером");
         }
       });
 
+      // Запуск перевірки при завантаженні сторінки
       updateNavbar();
     });
   </script>
