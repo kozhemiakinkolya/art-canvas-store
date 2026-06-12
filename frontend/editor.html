@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Онлайн-Редактор Малювання | ArtCanvas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas</a>
+      <nav class="hidden md:flex space-x-8 font-medium">
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600 transition">Головна</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Галерея</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Замовити по фото</a>
+        <a href="editor.html" class="text-indigo-600 hover:text-indigo-800">Онлайн-Редактор</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Про автора</a>
+      </nav>
+      <div id="auth-zone" class="flex items-center space-x-4">
+        <a href="auth.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition shadow">Увійти</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow container mx-auto px-6 py-8 flex flex-col items-center">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2 text-center">Створіть свій шедевр онлайн</h1>
+    <p class="text-gray-600 mb-6 text-center max-w-xl">
+      Намалюйте картину за допомогою інструментів нижче, і ви зможете миттєво надіслати її автору для друку на справжньому полотні!
+    </p>
+
+    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-4 flex flex-col md:flex-row gap-6">
+      
+      <div class="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Колір</label>
+          <input type="color" id="color-picker" class="w-full h-12 rounded-lg cursor-pointer border-0 bg-transparent">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Товщина: <span id="brush-size-val">5</span>px</label>
+          <input type="range" id="brush-size" min="1" max="50" value="5" class="w-full accent-indigo-600">
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <button id="btn-brush" class="w-full bg-indigo-600 text-white py-2 px-3 rounded-lg font-medium text-sm transition">🖌️ Пензель</button>
+          <button id="btn-eraser" class="w-full bg-white text-gray-700 border border-gray-300 py-2 px-3 rounded-lg font-medium text-sm hover:bg-gray-100 transition">🧽 Ластик</button>
+        </div>
+
+        <div class="md:mt-auto">
+          <button id="btn-clear" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-2 px-3 rounded-lg font-semibold text-sm transition border border-red-200">🗑️ Очистити</button>
+        </div>
+      </div>
+
+      <div class="w-full md:w-3/4 flex flex-col items-center justify-center bg-gray-100 rounded-xl p-2 border border-dashed border-gray-300 overflow-auto">
+        <canvas id="paint-canvas" width="600" height="400" class="bg-white shadow-md rounded-lg cursor-crosshair max-w-full"></canvas>
+      </div>
+    </div>
+
+    <div class="w-full max-w-4xl mt-6 bg-indigo-50 border border-indigo-100 rounded-xl p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div>
+        <h3 class="text-lg font-bold text-indigo-900">Бажаєте замовити картину?</h3>
+        <p class="text-sm text-indigo-700">Ми надрукуємо ваш малюнок на преміум-полотні 40х60 см. Фіксована вартість — 450 грн.</p>
+      </div>
+      <button id="btn-order-canvas" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg transform active:scale-95">
+        🚀 Замовити друк полотна
+      </button>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

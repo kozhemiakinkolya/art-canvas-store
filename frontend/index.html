@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Арт-Галерея | Картини на замовлення</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas</a>
+      
+      <nav class="hidden md:flex space-x-8 font-medium">
+        <a href="index.html" class="text-indigo-600 hover:text-indigo-800">Головна</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Галерея</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Замовити по фото</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Онлайн-Редактор</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Про автора</a>
+      </nav>
+
+      <div id="auth-zone" class="flex items-center space-x-4">
+        <a href="auth.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition shadow">Увійти</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow container mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between">
+    <div class="md:w-1/2 space-y-6">
+      <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+        Живопис, що оживає у вашому домі
+      </h1>
+      <p class="text-lg text-gray-600">
+        Купуйте готові картини автора, замовляйте унікальні полотна за вашими фотографіями або творіть власні шедеври в нашому онлайн-редакторі.
+      </p>
+      <div class="flex space-x-4">
+        <a href="#" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition shadow-lg">Дивитись картини</a>
+        <a href="#" class="bg-white text-indigo-600 border border-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition">Створити свій малюнок</a>
+      </div>
+    </div>
+    <div class="md:w-1/2 mt-10 md:mt-0 flex justify-center">
+      <div class="w-full max-w-md h-80 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl shadow-2xl flex items-center justify-center text-white text-xl font-bold italic p-6 text-center transform rotate-2">
+        "Мистецтво змиває з душі пил повсякденного життя"
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-gray-800">
+    <p>&copy; 2026 ArtCanvas Store. Всі права захищені.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

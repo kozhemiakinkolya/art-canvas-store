@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Галерея Картин | ArtCanvas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas</a>
+      <nav class="hidden md:flex space-x-8 font-medium">
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600 transition">Головна</a>
+        <a href="gallery.html" class="text-indigo-600 hover:text-indigo-800">Галерея</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Замовити по фото</a>
+        <a href="editor.html" class="text-gray-600 hover:text-indigo-600 transition">Онлайн-Редактор</a>
+        <a href="#" class="text-gray-600 hover:text-indigo-600 transition">Про автора</a>
+      </nav>
+      <div id="auth-zone" class="flex items-center space-x-4">
+        <a href="auth.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition shadow">Увійти</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-extrabold text-gray-950 mb-8">Каталог авторських картин</h1>
+
+    <div class="flex flex-col md:flex-row gap-8">
+      
+      <aside class="w-full md:w-1/4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit sticky top-24">
+        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span>Filter</span> Фільтрація
+        </h3>
+        
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Категорія</label>
+            <select id="filter-category" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
+              <option value="">Всі жанри</option>
+              <option value="Пейзаж">Пейзаж</option>
+              <option value="Портрет">Портрет</option>
+              <option value="Абстракція">Абстракція</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Техніка виконання</label>
+            <select id="filter-technique" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
+              <option value="">Всі техніки</option>
+              <option value="Олія">Олія</option>
+              <option value="Акрил">Акрил</option>
+              <option value="Акварель">Акварель</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Макс. ціна: <span id="price-val">10000</span> грн</label>
+            <input type="range" id="filter-price" min="500" max="20000" step="500" value="20000" class="w-full accent-indigo-600">
+          </div>
+
+          <button id="btn-apply-filters" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition">
+            Застосувати
+          </button>
+        </div>
+      </aside>
+
+      <section class="w-full md:w-3/4">
+        <div id="paintings-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="col-span-full text-center py-12 text-gray-500">Завантаження картин...</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div id="purchase-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button id="modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      <h3 class="text-xl font-bold text-gray-900 mb-2" id="modal-title">Підтвердження покупки</h3>
+      <p class="text-gray-600 mb-6">Ви дійсно хочете придбати картину <span id="modal-painting-name" class="font-bold text-indigo-600"></span>?</p>
+      
+      <div class="flex gap-4">
+        <button id="modal-cancel" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg transition">Скасувати</button>
+        <button id="modal-confirm" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition">Купити</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="gallery.js"></script>
+</body>
+</html>
