@@ -142,11 +142,40 @@ app.post('/api/paintings/order', authMiddleware, upload.single('photo'), (req, r
   saveData(ORDERS_FILE, orders);
   res.json({ msg: '🎉 Замовлення успішно створено!', order: newOrder });
 });
-// 👑 РОУТ ДЛЯ АДМІНІСТРАТОРА: ОРИМАННЯ ВСІХ ЗАМОВЛЕНЬ
+
+// 👑 РОУТИ АДМІНІСТРАТОРА: ОТРИМАННЯ ЗАМОВЛЕНЬ + КЛІЄНТИ
 app.get('/api/admin/orders', adminMiddleware, (req, res) => {
   let orders = loadData(ORDERS_FILE);
-  res.json(orders);
+  let users = loadData(USERS_FILE);
+
+  let ordersWithUsers = orders.map(order => {
+    const buyer = users.find(u => u.id === order.userId);
+    return {
+      ...order,
+      buyerName: buyer ? buyer.name : 'Невідомий клієнт',
+      buyerEmail: buyer ? buyer.email : 'Емейл відсутній'
+    };
+  });
+  res.json(ordersWithUsers);
 });
+
+// 👑 РОУТ АДМІНІСТРАТОРА: ЗМІНА СТАТУСУ ЗАМОВЛЕННЯ
+app.put('/api/admin/orders/:id/status', adminMiddleware, (req, res) => {
+  const orderId = req.params.id;
+  const { status } = req.body;
+  
+  let orders = loadData(ORDERS_FILE);
+  const orderIndex = orders.findIndex(o => o.id === orderId);
+
+  if (orderIndex === -1) {
+    return res.status(404).json({ msg: 'Замовлення не знайдено!' });
+  }
+
+  orders[orderIndex].status = status;
+  saveData(ORDERS_FILE, orders);
+  res.json({ msg: `Статус замовлення №${orderId} змінено!` });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
