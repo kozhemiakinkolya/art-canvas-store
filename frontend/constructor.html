@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Онлайн конструктор | ArtCanvas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
 
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-black text-indigo-600 tracking-wider flex-shrink-0">ArtCanvas</a>
+      <nav class="hidden md:flex space-x-6 font-medium text-gray-600 mx-4">
+        <a href="index.html" class="hover:text-indigo-600 transition">Головна</a>
+        <a href="gallery.html" class="hover:text-indigo-600 transition">Галерея картин</a>
+        <a href="constructor.html" class="text-indigo-600 font-bold">Створити картину</a>
+        <a href="admin.html" class="text-red-500 hover:text-red-700 font-bold transition">Панель admin</a>
+      </nav>
+      <div id="auth-zone" class="flex items-center space-x-4 flex-shrink-0 min-w-[190px] justify-end"></div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-6 py-12 max-w-6xl space-y-8">
+    <div class="flex justify-center space-x-4">
+      <button onclick="toggleTab('editor')" id="tab-editor" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow">🎨 Конструктор макетів</button>
+      <button onclick="toggleTab('photo')" id="tab-photo" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-white text-gray-600 border hover:bg-gray-50 shadow-sm">📸 Друк власного фото</button>
+    </div>
+
+    <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
+      <div class="lg:col-span-7 bg-gray-200 p-8 rounded-3xl flex items-center justify-center min-h-[400px]">
+        <div id="canvas-preview" class="w-full max-w-[380px] h-[280px] bg-white rounded shadow-xl flex items-center justify-center p-6 text-center border-4 border-white overflow-hidden">
+          <p id="canvas-text" class="text-xl font-serif font-bold text-gray-800 break-words w-full">Ваш текст</p>
+        </div>
+      </div>
+      <div class="lg:col-span-5 bg-white p-6 rounded-3xl shadow border space-y-4">
+        <input type="text" id="input-text" value="Ваш текст" oninput="document.getElementById('canvas-text').innerText = this.value || ' '" class="w-full p-3 bg-gray-50 border rounded-xl outline-none text-sm">
+        <div class="flex gap-2">
+          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#ffffff'" class="w-8 h-8 rounded-full border bg-white"></button>
+          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#bfdbfe'" class="w-8 h-8 rounded-full border bg-blue-200"></button>
+          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#bbf7d0'" class="w-8 h-8 rounded-full border bg-green-200"></button>
+          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#1f2937'" class="w-8 h-8 rounded-full border bg-gray-800"></button>
+        </div>
+        <select id="editor-size" class="w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none font-medium">
+          <option value="40x60">40x60 см (650 грн)</option>
+          <option value="60x80">60x80 см (950 грн)</option>
+        </select>
+        <button onclick="sendEditorOrder()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow">Оформити макет</button>
+      </div>
+    </div>
+
+    <div id="view-photo" class="hidden max-w-xl mx-auto bg-white p-8 rounded-3xl shadow border space-y-4">
+      <form id="form-photo-order" class="space-y-4">
+        <div class="border-2 border-dashed rounded-2xl p-6 text-center bg-gray-50 relative">
+          <input type="file" id="photo-file" accept="image/*" required class="absolute inset-0 opacity-0 cursor-pointer">
+          <p class="text-sm font-bold text-indigo-600">Натисніть для вибору фотографії</p>
+        </div>
+        <select id="photo-size" class="w-full p-3 bg-gray-50 border rounded-xl text-sm font-medium outline-none">
+          <option value="40x60">40x60 см (700 грн)</option>
+          <option value="60x80">60x80 см (1050 грн)</option>
+        </select>
+        <textarea id="photo-comment" placeholder="Коментар або побажання для ретуші..." rows="3" class="w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none"></textarea>
+        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow">Надіслати фото менеджеру</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function toggleTab(mode) {
+      document.getElementById('view-editor').classList.toggle('hidden', mode !== 'editor');
+      document.getElementById('view-photo').classList.toggle('hidden', mode !== 'photo');
+      document.getElementById('tab-editor').className = mode === 'editor' ? "px-6 py-2.5 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow" : "px-6 py-2.5 rounded-xl font-bold text-sm bg-white text-gray-600 border shadow-sm";
+      document.getElementById('tab-photo').className = mode === 'photo' ? "px-6 py-2.5 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow" : "px-6 py-2.5 rounded-xl font-bold text-sm bg-white text-gray-600 border shadow-sm";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const authZone = document.getElementById("auth-zone");
+      const token = localStorage.getItem("userToken");
+      authZone.innerHTML = token ? `<span class="text-sm font-semibold text-gray-700">👋 Активний кабінет</span>` : `<a href="index.html" class="text-sm font-bold text-indigo-600">🔐 Увійти на Головній</a>`;
+
+      window.sendEditorOrder = async () => {
+        if (!token) return alert("Потрібно авторизуватись!");
+        const size = document.getElementById("editor-size").value;
+        const text = document.getElementById("input-text").value;
+
+        const res = await fetch("/api/paintings/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({
+            orderType: "canvas_editor",
+            size,
+            material: "Натуральне полотно",
+            comment: `Конструктор цитат: "${text}"`,
+            totalPrice: size === "40x60" ? 650 : 950,
+            canvasImage: "Конфігурація текстового полотна"
+          })
+        });
+        if (res.ok) { alert("Замовлення конструктора створено!"); window.location.href="index.html"; }
+      };
+
+      document.getElementById("form-photo-order").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!token) return alert("Потрібно авторизуватись!");
+
+        const fileInput = document.getElementById("photo-file");
+        const size = document.getElementById("photo-size").value;
+        const comment = document.getElementById("photo-comment").value;
+
+        const formData = new FormData();
+        formData.append("photo", fileInput.files[0]);
+        formData.append("orderType", "by_photo");
+        formData.append("size", size);
+        formData.append("material", "Преміум полотно");
+        formData.append("comment", comment);
+        formData.append("totalPrice", size === "40x60" ? 700 : 1050);
+
+        const res = await fetch("/api/paintings/order", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${token}` },
+          body: formData
+        });
+        if (res.ok) { alert("Фото успішно відправлено на сервер!"); window.location.href="index.html"; }
+      });
+    });
+  </script>
+</body>
+</html>
