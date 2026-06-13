@@ -3,8 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Онлайн конструктор | ArtCanvas</title>
+  <title>Поле для малювання та замовлення | ArtCanvas</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Стиль для рамки художнього полотна */
+    #paint-canvas {
+      cursor: crosshair;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15), inset 0 0 10px rgba(0,0,0,0.05);
+      background-color: #ffffff;
+      touch-action: none; /* Вимикає системний скрол при малюванні на смартфонах */
+    }
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
@@ -23,29 +32,70 @@
 
   <main class="container mx-auto px-6 py-12 max-w-6xl space-y-8">
     <div class="flex justify-center space-x-4">
-      <button onclick="toggleTab('editor')" id="tab-editor" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow">🎨 Конструктор макетів</button>
+      <button onclick="toggleTab('editor')" id="tab-editor" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow">🎨 Поле для малювання</button>
       <button onclick="toggleTab('photo')" id="tab-photo" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-white text-gray-600 border hover:bg-gray-50 shadow-sm">📸 Друк власного фото</button>
     </div>
 
     <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
-      <div class="lg:col-span-7 bg-gray-200 p-8 rounded-3xl flex items-center justify-center min-h-[400px]">
-        <div id="canvas-preview" class="w-full max-w-[380px] h-[280px] bg-white rounded shadow-xl flex items-center justify-center p-6 text-center border-4 border-white overflow-hidden">
-          <p id="canvas-text" class="text-xl font-serif font-bold text-gray-800 break-words w-full">Ваш текст</p>
+      
+      <div class="lg:col-span-7 bg-gray-200 p-6 rounded-3xl flex flex-col items-center justify-center space-y-4">
+        <div class="text-center">
+          <span class="text-xs font-bold uppercase tracking-wide text-gray-500">Інтерактивне цифрове полотно</span>
         </div>
+        <canvas id="paint-canvas" width="600" height="400" class="w-full max-w-[500px] h-[350px] bg-white rounded-lg border-4 border-white"></canvas>
+        
+        <p class="text-xs text-gray-400">Використовуйте мишу або трекпад для малювання ескізу</p>
       </div>
-      <div class="lg:col-span-5 bg-white p-6 rounded-3xl shadow border space-y-4">
-        <input type="text" id="input-text" value="Ваш текст" oninput="document.getElementById('canvas-text').innerText = this.value || ' '" class="w-full p-3 bg-gray-50 border rounded-xl outline-none text-sm">
-        <div class="flex gap-2">
-          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#ffffff'" class="w-8 h-8 rounded-full border bg-white"></button>
-          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#bfdbfe'" class="w-8 h-8 rounded-full border bg-blue-200"></button>
-          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#bbf7d0'" class="w-8 h-8 rounded-full border bg-green-200"></button>
-          <button onclick="document.getElementById('canvas-preview').style.backgroundColor='#1f2937'" class="w-8 h-8 rounded-full border bg-gray-800"></button>
+
+      <div class="lg:col-span-5 bg-white p-6 rounded-3xl shadow border space-y-6">
+        <h3 class="text-lg font-black text-gray-900 border-b pb-3">Інструменти малювання</h3>
+        
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-gray-500 uppercase">Колір пензля:</label>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="setBrushColor('#1f2937')" class="w-8 h-8 rounded-full border-2 border-indigo-600 bg-gray-800 focus:outline-none color-btn"></button>
+            <button onclick="setBrushColor('#dc2626')" class="w-8 h-8 rounded-full border bg-red-600 focus:outline-none color-btn"></button>
+            <button onclick="setBrushColor('#2563eb')" class="w-8 h-8 rounded-full border bg-blue-600 focus:outline-none color-btn"></button>
+            <button onclick="setBrushColor('#16a34a')" class="w-8 h-8 rounded-full border bg-green-600 focus:outline-none color-btn"></button>
+            <button onclick="setBrushColor('#ea580c')" class="w-8 h-8 rounded-full border bg-orange-600 focus:outline-none color-btn"></button>
+            <input type="color" onchange="setBrushColor(this.value)" class="w-8 h-8 rounded-md border cursor-pointer p-0 bg-transparent">
+          </div>
         </div>
-        <select id="editor-size" class="w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none font-medium">
-          <option value="40x60">40x60 см (650 грн)</option>
-          <option value="60x80">60x80 см (950 грн)</option>
-        </select>
-        <button onclick="sendEditorOrder()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow">Оформити макет</button>
+
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs font-bold text-gray-500 uppercase">
+            <span>Товщина пензля:</span>
+            <span id="brush-size-val">5 px</span>
+          </div>
+          <input type="range" id="brush-size" min="2" max="30" value="5" class="w-full accent-indigo-600">
+        </div>
+
+        <div class="pt-2">
+          <button onclick="clearCanvas()" class="w-full border-2 border-dashed border-red-200 text-red-500 hover:bg-red-50 font-bold py-2.5 rounded-xl text-xs transition uppercase tracking-wider">
+            🗑️ Очистити полотно
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 pt-2 border-t">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Розмір:</label>
+            <select id="editor-size" class="w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none font-medium">
+              <option value="40x60">40x60 см (650 грн)</option>
+              <option value="60x80">60x80 см (950 грн)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Полотно:</label>
+            <select id="editor-material" class="w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none font-medium">
+              <option value="Натуральне полотно">Натуральне преміум</option>
+              <option value="Синтетичне полотно">Синтетика (Економ)</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="sendEditorOrder()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-sm">
+          🛒 Надіслати мій малюнок на друк
+        </button>
       </div>
     </div>
 
@@ -54,6 +104,7 @@
         <div class="border-2 border-dashed rounded-2xl p-6 text-center bg-gray-50 relative">
           <input type="file" id="photo-file" accept="image/*" required class="absolute inset-0 opacity-0 cursor-pointer">
           <p class="text-sm font-bold text-indigo-600">Натисніть для вибору фотографії</p>
+          <p class="text-xs text-gray-400 mt-1">Зображення високої роздільної здатності</p>
         </div>
         <select id="photo-size" class="w-full p-3 bg-gray-50 border rounded-xl text-sm font-medium outline-none">
           <option value="40x60">40x60 см (700 грн)</option>
@@ -66,6 +117,92 @@
   </main>
 
   <script>
+    // Змінні для малювання на Canvas
+    const canvas = document.getElementById('paint-canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let brushColor = '#1f2937';
+    let brushSize = 5;
+
+    // Ініціалізація стилів лінії малювання
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    // Слухачі подій миші для малювання
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      const { x, y } = getCanvasMousePos(e);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDrawing) return;
+      const { x, y } = getCanvasMousePos(e);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = brushColor;
+      ctx.lineWidth = brushSize;
+      ctx.stroke();
+    });
+
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseleave', () => isDrawing = false);
+
+    // Підтримка Touch подій для мобільних пристроїв та тачпадів
+    canvas.addEventListener('touchstart', (e) => {
+      isDrawing = true;
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent('mousedown', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      });
+      canvas.dispatchEvent(mouseEvent);
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent('mousemove', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      });
+      canvas.dispatchEvent(mouseEvent);
+    });
+
+    canvas.addEventListener('touchend', () => {
+      const mouseEvent = new MouseEvent('mouseup', {});
+      canvas.dispatchEvent(mouseEvent);
+    });
+
+    // Розрахунок точних координат курсора відносно внутрішньої сітки canvas (600x400)
+    function getCanvasMousePos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (e.clientX - rect.left) * (canvas.width / rect.width),
+        y: (e.clientY - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    // Зміна параметрів пензля
+    function setBrushColor(color) {
+      brushColor = color;
+      // Візуальне маркування обраного кольору кнопки
+      document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-indigo-500'));
+      if(e && e.target && e.target.classList) {
+        e.target.classList.add('ring-4', 'ring-indigo-500');
+      }
+    }
+
+    const sizeInput = document.getElementById('brush-size');
+    sizeInput.addEventListener('input', (e) => {
+      brushSize = e.target.value;
+      document.getElementById('brush-size-val').innerText = `${brushSize} px`;
+    });
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Перемикач режимів сторінки (Малювання / Власне фото)
     function toggleTab(mode) {
       document.getElementById('view-editor').classList.toggle('hidden', mode !== 'editor');
       document.getElementById('view-photo').classList.toggle('hidden', mode !== 'photo');
@@ -73,15 +210,21 @@
       document.getElementById('tab-photo').className = mode === 'photo' ? "px-6 py-2.5 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow" : "px-6 py-2.5 rounded-xl font-bold text-sm bg-white text-gray-600 border shadow-sm";
     }
 
+    // СИНХРОНІЗАЦІЯ СЕСІЇ ТА НАДСИЛАННЯ НА СЕРВЕР
     document.addEventListener("DOMContentLoaded", () => {
       const authZone = document.getElementById("auth-zone");
       const token = localStorage.getItem("userToken");
-      authZone.innerHTML = token ? `<span class="text-sm font-semibold text-gray-700">👋 Активний кабінет</span>` : `<a href="index.html" class="text-sm font-bold text-indigo-600">🔐 Увійти на Головній</a>`;
+      authZone.innerHTML = token ? `<span class="text-sm font-semibold text-gray-700">👋 Кабінет активний</span>` : `<a href="index.html" class="text-sm font-bold text-indigo-600">🔐 Увійти на Головній</a>`;
 
+      // НАДСИЛАННЯ МАЛЮНКА НА БЕКЕНД
       window.sendEditorOrder = async () => {
-        if (!token) return alert("Потрібно авторизуватись!");
+        if (!token) return alert("Потрібно авторизуватись на головній сторінці!");
+        
         const size = document.getElementById("editor-size").value;
-        const text = document.getElementById("input-text").value;
+        const material = document.getElementById("editor-material").value;
+        
+        // Перетворюємо весь вміст графічного canvas у текстовий рядок Base64 DataURL
+        const drawnImageBase64 = canvas.toDataURL('image/png');
 
         const res = await fetch("/api/paintings/order", {
           method: "POST",
@@ -89,15 +232,22 @@
           body: JSON.stringify({
             orderType: "canvas_editor",
             size,
-            material: "Натуральне полотно",
-            comment: `Конструктор цитат: "${text}"`,
+            material,
+            comment: "Клієнт намалював унікальний ескіз безпосередньо на сайті.",
             totalPrice: size === "40x60" ? 650 : 950,
-            canvasImage: "Конфігурація текстового полотна"
+            canvasImage: drawnImageBase64 // Передаємо рядок зображення безпосередньо в базу JSON
           })
         });
-        if (res.ok) { alert("Замовлення конструктора створено!"); window.location.href="index.html"; }
+
+        if (res.ok) { 
+          alert("🎉 Ваш унікальний малюнок успішно збережено в CRM базі адміна!"); 
+          window.location.href = "index.html"; 
+        } else {
+          alert("Помилка відправки замовлення.");
+        }
       };
 
+      // ВІДПРАВКА СТАНДАРТНОГО ФОТО (ФОРМА formData)
       document.getElementById("form-photo-order").addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!token) return alert("Потрібно авторизуватись!");
@@ -119,7 +269,7 @@
           headers: { "Authorization": `Bearer ${token}` },
           body: formData
         });
-        if (res.ok) { alert("Фото успішно відправлено на сервер!"); window.location.href="index.html"; }
+        if (res.ok) { alert("Фото завантажено!"); window.location.href="index.html"; }
       });
     });
   </script>
