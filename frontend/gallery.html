@@ -3,110 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Галерея картин | ArtCanvas</title>
+  <title>Галерея готових картин | ArtCanvas</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-  <header class="bg-white shadow-md sticky top-0 z-50">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-bold text-indigo-600 tracking-wide">ArtCanvas</a>
-      <nav class="hidden md:flex space-x-8 font-medium">
-        <a href="index.html">Головна</a>
-        <a href="gallery.html">Галерея</a>
-        <a href="custom-order.html">Замовити по foto</a>
-        <a href="editor.html">Онлайн-Редактор</a>
-        <a href="admin.html">Адмінка</a>
+      <a href="index.html" class="text-2xl font-black text-indigo-600 tracking-wider flex-shrink-0">ArtCanvas</a>
+      <nav class="hidden md:flex space-x-6 font-medium text-gray-600 mx-4">
+        <a href="index.html" class="hover:text-indigo-600 transition">Головна</a>
+        <a href="gallery.html" class="text-indigo-600 font-bold">Галерея картин</a>
+        <a href="constructor.html" class="hover:text-indigo-600 transition">Створити картину</a>
+        <a href="admin.html" class="text-red-500 hover:text-red-700 font-bold transition">Панель admin</a>
       </nav>
-      <div id="auth-zone">
-        <a href="auth.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition shadow">Увійти</a>
-      </div>
+      <div id="auth-zone" class="flex items-center space-x-4 flex-shrink-0 min-w-[190px] justify-end"></div>
     </div>
   </header>
 
-  <section class="bg-indigo-900 text-white py-12 text-center">
-    <h1 class="text-4xl font-black tracking-tight">Каталог авторських картин</h1>
-    <p class="text-indigo-200 mt-2 text-lg">Оберіть готовий шедевр для вашої оселі</p>
-  </section>
-
-  <main class="container mx-auto px-6 py-12 flex-grow">
-    <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div class="col-span-full text-center py-12">
-        <p class="text-gray-500 text-lg animate-pulse">Завантаження каталогу картин...</p>
-      </div>
+  <main class="container mx-auto px-6 py-12 space-y-8">
+    <h1 class="text-3xl font-black text-gray-900">🖼️ Каталог готових робіт</h1>
+    <div id="paintings-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <p class="text-gray-400">Синхронізація товарів...</p>
     </div>
   </main>
 
-  <footer class="bg-gray-900 text-gray-500 text-center py-6">
-    <p>&copy; 2026 ArtCanvas Store.</p>
-  </footer>
-
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
-      const galleryGrid = document.getElementById("gallery-grid");
-      try {
-        const response = await fetch("/api/paintings");
-        const paintings = await response.json();
+      const grid = document.getElementById("paintings-grid");
+      const authZone = document.getElementById("auth-zone");
+      const user = localStorage.getItem("user");
 
-        if (response.ok) {
-          galleryGrid.innerHTML = "";
-          if (paintings.length === 0) {
-            galleryGrid.innerHTML = `<p class="text-center text-gray-500 py-12 col-span-full">Каталог порожній. Додайте картини через адмінку!</p>`;
-            return;
-          }
-
-          paintings.forEach(art => {
-            const card = document.createElement("div");
-            card.className = "bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col hover:shadow-lg transition";
-            card.innerHTML = `
-              <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-64 object-cover" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=500'">
-              <div class="p-6 flex-grow flex flex-col justify-between">
-                <div>
-                  <span class="text-xs font-bold uppercase tracking-wider text-indigo-500">${art.category || 'Живопис'}</span>
-                  <h3 class="text-xl font-bold mt-1 text-gray-900">${art.title}</h3>
-                  <p class="text-sm text-gray-500 mt-2 line-clamp-3">${art.description || 'Опис відсутній.'}</p>
-                  <div class="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl">
-                    <div><strong>Техніка:</strong> ${art.technique || 'Олія'}</div>
-                    <div><strong>Розмір:</strong> ${art.size || 'Власний'}</div>
-                  </div>
-                </div>
-                <div class="mt-6 flex justify-between items-center pt-4 border-t border-gray-100">
-                  <span class="text-2xl font-black text-indigo-600">${art.price} грн</span>
-                  <button onclick="orderPainting('${art._id}', '${art.title}', ${art.price})" class="bg-indigo-600 text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-indigo-700 transition">Замовити</button>
-                </div>
-              </div>
-            `;
-            galleryGrid.appendChild(card);
-          });
-        }
-      } catch (err) {
-        galleryGrid.innerHTML = `<p class="text-center text-red-500 py-12 col-span-full">Помилка з'єднання з сервером.</p>`;
+      if (user) {
+        authZone.innerHTML = `<span class="text-sm font-semibold text-gray-700">👋 Авторизований</span>`;
+      } else {
+        authZone.innerHTML = `<a href="index.html" class="text-sm font-bold text-indigo-600">🔐 Авторизуватись</a>`;
       }
+
+      try {
+        const res = await fetch("/api/paintings");
+        const paintings = await res.json();
+        grid.innerHTML = paintings.length === 0 ? `<p class="text-gray-400">Каталог порожній.</p>` : "";
+
+        paintings.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "bg-white rounded-2xl shadow border overflow-hidden p-4 space-y-4";
+          card.innerHTML = `
+            <img src="${item.imageUrl}" class="w-full h-64 object-cover rounded-xl">
+            <div>
+              <h3 class="text-xl font-bold">${item.title}</h3>
+              <p class="text-sm text-gray-500 mt-1">${item.description || 'Опис відсутній'}</p>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+              <span class="text-xl font-black text-indigo-600">${item.price} грн</span>
+              <button onclick="buyItem('${item._id}', '${item.title}', ${item.price})" class="bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-indigo-700 transition">Купити</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (err) { grid.innerHTML = `<p class="text-red-500">Помилка завантаження товарів.</p>`; }
     });
 
-    async function orderPainting(id, title, price) {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("🔒 Будь ласка, авторизуйтесь в системі, щоб зробити замовлення!");
-        window.location.href = "auth.html";
-        return;
-      }
+    window.buyItem = async (id, title, price) => {
+      const token = localStorage.getItem("userToken");
+      if (!token) return alert("Будь ласка, увійдіть у свій профіль на головній сторінці!");
 
-      try {
-        const response = await fetch("/api/paintings/order", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ orderType: "catalog", totalPrice: price, items: JSON.stringify([{ id, title, price }]) })
-        });
-        const data = await response.json();
-        if (response.ok) alert(`🎉 Успіх! ${data.msg}`);
-        else alert(data.msg || "Помилка замовлення.");
-      } catch (err) { alert("Помилка зв'язку."); }
-    }
+      const res = await fetch("/api/paintings/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+          orderType: "catalog",
+          totalPrice: price,
+          items: JSON.stringify([{ id, title, price }]),
+          size: "Стандарт",
+          material: "Натуральне полотно",
+          comment: "Замовлення з каталогу вітрини"
+        })
+      });
+      if (res.ok) alert("🎉 Товар успішно додано в базу адміна!");
+    };
   </script>
-  <script src="navbar.js"></script>
 </body>
 </html>
